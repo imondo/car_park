@@ -1,37 +1,26 @@
 # car_park
 
-#### 介绍
-canvas 停车场绘制
+一个使用 canvas 绘制的停车场示意图
 
-#### 软件架构
-软件架构说明
+```js
 
+  var context = canvas.getContext("2d");//得到绘图的上下文环境
 
-#### 安装教程
+  context.beginPath();//开始绘制线条，若不使用beginPath，则不能绘制多条线条
+  context.moveTo(100, 100);//线条开始位置
+  context.lineTo(700, 700);//线条经过点
+  context.lineTo(100, 700);
+  context.lineTo(100, 100);
+  context.closePath();//结束绘制线条，不是必须的
+  
+  context.lineWidth = 5;//设置线条宽度
+  context.strokeStyle = "red";//设置线条颜色
+  context.stroke();//用于绘制线条
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+  context.beginPath();
+  context.moveTo(200, 100);
+  context.lineTo(700, 600);
+  context.closePath();
+  context.strokeStyle = "black";
+  context.stroke();
+```
