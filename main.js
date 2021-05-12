@@ -28,7 +28,7 @@ function DrawCarport() {
   this.borderColor = '#ffffff'; // 车位border颜色
   this.lineWidth = 1; // 车位线宽度
 
-  this.padding = 5; // 停车场边缘宽度
+  this.padding = 0; // 停车场边缘宽度
 
   this.car_entry_w = 55; // 入口宽度
 
