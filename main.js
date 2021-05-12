@@ -15,11 +15,6 @@ var ctx = canvas.getContext('2d');
 WIDTH = document.documentElement.clientWidth;
 HEIGHT = document.documentElement.clientHeight;
 
-var CAR = {
-  width: 150,
-  height: 100,
-};
-
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
@@ -31,7 +26,7 @@ canvas.height = HEIGHT;
 function DrawCarport() {
   this.bgColor = '#969593'; // 车位颜色
   this.borderColor = '#ffffff'; // 车位border颜色
-  this.lineWidth = 2; // 车位线宽度
+  this.lineWidth = 1; // 车位线宽度
 
   this.padding = 5; // 停车场边缘宽度
 
@@ -271,7 +266,7 @@ DrawCarport.prototype.init = function () {
   this.drawCarSpace();
 
   /**
-   * 1. 绘制办公楼停车场
+   * 1. 绘制办公楼停车场 后侧
    */
   // 办公楼绿地长度
   var _greeW = this.portH - this.halveH - this.car_entry_w;
@@ -288,10 +283,79 @@ DrawCarport.prototype.init = function () {
   }
 
   /**
-   * 2. 绘制右侧
+   * 2. 绘制左侧
    */
+  // 停车位宽度
+  // 起始点
+  var start = {
+    x: this.halveW - this.padding + 8 + (this.halveW - this.padding) / 2 + 2 * car_w + 55,
+    y: this.padding + 2,
+  };
+  // 绘制 12个
+  for (let i = 0; i < 12; i++) {
+    this.drawCar(start.x + (car_w+5) * i, start.y, car_w+5, car_w * 2);
+  }
+
+  /**
+   * 3. 绘制前侧
+   */
+  // 停车位宽度
+  // 起始点
+  var start = {
+    x: this.portW - car_w * 2,
+    y: this.padding + 2 + car_w * 2 + 10,
+  };
+  // 绘制 21个
+  for (let i = 0; i < 21; i++) {
+    this.drawCar(start.x, start.y + car_w * i, car_w * 2, car_w);
+  }
+
+  /**
+   * 4. 绘制右侧
+   */
+  // 停车位宽度
+  // 起始点
+  var start = {
+    x: this.halveW - this.padding + 8 + (this.halveW - this.padding) / 2 + 2 * car_w + 55,
+    y: this.portH - this.halveH - car_w * 2,
+  };
+  // 绘制 12 个
+  for (let i = 0; i < 12; i++) {
+    this.drawCar(start.x + (car_w + 5) * i, start.y, car_w + 5, car_w * 2);
+  }
+
+  /**
+   * 中间4排
+   */
+  var drawCar = this.drawCar
+  // 起始点
+  function draw_Car(num, halveW, padding, car_w) {
+    var start = {
+      x: halveW - padding + 8 + (halveW - padding) / 2 + 2 * car_w + 55,
+      y: padding + 2 + car_w * 2 + car_w * 2 * num,
+    };
+    // 绘制 12个
+    for (let i = 0; i < 9; i++) {
+      drawCar(start.x + (car_w+5) * i, start.y, car_w+5, car_w * 2);
+    }
+  }
+
+  draw_Car(1, this.halveW, this.padding, car_w)
+  draw_Car(2, this.halveW, this.padding, car_w)
+
+  draw_Car(4, this.halveW, this.padding, car_w)
+  draw_Car(5, this.halveW, this.padding, car_w)
+
+  draw_Car(7, this.halveW, this.padding, car_w)
+  draw_Car(8, this.halveW, this.padding, car_w)
+
+  draw_Car(10, this.halveW, this.padding, car_w)
+  draw_Car(11, this.halveW, this.padding, car_w)
+
+  
 };
 
 var drawCarport = new DrawCarport();
 
 drawCarport.init();
+
