@@ -19,7 +19,7 @@ canvas.height = HEIGHT;
  * @param {*} x 
  * @param {*} y 
  */
-function Draw_carport() {
+function DrawCarport() {
   this.bgColor = "#969593"; // 车位颜色
   this.borderColor = '#ffffff'; // 车位border颜色
   this.lineWidth = 2; // 车位线宽度
@@ -28,7 +28,7 @@ function Draw_carport() {
 /**
  * 绘制停车场
  */
-Draw_carport.prototype.draw_port = function() {
+DrawCarport.prototype.drawPort = function() {
   var _padding = 5; // 停车场边缘宽度
   var car_entry_w = 55 // 入口宽度
   // 停车场边缘 4个点
@@ -51,6 +51,7 @@ Draw_carport.prototype.draw_port = function() {
   ctx.lineTo(port_w - halve_w * 4, port_h - halve_h - car_entry_w) // 入口拐点
   ctx.lineTo(_padding, port_h - halve_h - car_entry_w) // 入口拐点
   ctx.lineTo(_padding, _padding) // 入口拐点
+  
   ctx.strokeStyle = '#fffba0'
   ctx.stroke();
 }
@@ -58,7 +59,7 @@ Draw_carport.prototype.draw_port = function() {
 /**
  * 绘制车位
  */
-Draw_carport.prototype.draw = function(x, y) {
+DrawCarport.prototype.draw = function(x, y) {
   ctx.lineWidth = this.lineWidth;
   ctx.rect(x, y, CAR.width, CAR.height);
 
@@ -71,6 +72,6 @@ Draw_carport.prototype.draw = function(x, y) {
   ctx.stroke();
 }
 
-var drawCarport = new Draw_carport()
+var drawCarport = new DrawCarport()
 
-drawCarport.draw_port();
+drawCarport.drawPort();
