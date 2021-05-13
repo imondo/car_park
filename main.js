@@ -7,15 +7,23 @@
  *
  *     后
  */
-var canvas = document.getElementById('canvas'),
+function createHDCanvas(w = 300, h = 150) {
+  var ratio = window.devicePixelRatio || 1;
+  var canvas = document.getElementById('canvas');
+  canvas.width = w * ratio; // 实际渲染像素
+  canvas.height = h * ratio; // 实际渲染像素
+  canvas.style.width = `${w}px`; // 控制显示大小
+  canvas.style.height = `${h}px`; // 控制显示大小
+  canvas.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
+  return canvas;
+}
+
+var canvas,
   WIDTH,
-  HEIGHT;
-var ctx = canvas.getContext('2d');
+  HEIGHT,ctx;
 
 WIDTH = document.documentElement.clientWidth;
 HEIGHT = document.documentElement.clientHeight;
-
-canvas.width = WIDTH;
 
 /**
  * 绘制类
@@ -34,7 +42,10 @@ function DrawCarport() {
 
   HEIGHT = this.car_w * 42; // 重新计算高度，保证停车场能完全展示
 
-  canvas.height = HEIGHT;
+  // canvas.height = HEIGHT;
+
+  canvas = createHDCanvas(WIDTH, HEIGHT);
+  ctx = canvas.getContext('2d');
 
   this.portW = WIDTH - this.padding * 2;
   this.portH = HEIGHT - this.padding * 2;
@@ -61,32 +72,31 @@ function DrawCarport() {
     x: this.padding,
     y: this.padding,
     w: this.office_w,
-    h: this.portH - this.halveH - this.car_entry_w
-  }
+    h: this.portH - this.halveH - this.car_entry_w,
+  };
   // 短办公楼
   this.short_office = {
     x: this.padding,
     y: this.portH - this.halveH,
     w: this.office_w,
-    h: this.halveH + this.padding
-  }
+    h: this.halveH + this.padding,
+  };
 
   // 长绿化
   this.long_office_green = {
     x: this.car_w * 6 - this.lineWidth * 13,
     y: this.padding + 2,
     w: 2 * this.car_w,
-    h: this.portH - this.halveH - this.car_entry_w
-  }
+    h: this.portH - this.halveH - this.car_entry_w,
+  };
   // 短绿化
   this.short_office_green = {
     x: this.padding + this.office_w + 1.5,
     y: this.portH - this.halveH,
     w: this.portW - this.office_w - 4,
-    h: this.halveH + this.padding
-  }
+    h: this.halveH + this.padding,
+  };
 }
-
 
 DrawCarport.prototype.init = function () {
   this.drawPort();
@@ -153,14 +163,24 @@ DrawCarport.prototype.init = function () {
   };
   // 绘制 21个
   for (let i = 0; i < 21; i++) {
-    this.drawCar(start.x + 3, start.y + this.car_w * i, this.car_w * 2, this.car_w);
+    this.drawCar(
+      start.x + 3,
+      start.y + this.car_w * i,
+      this.car_w * 2,
+      this.car_w
+    );
   }
 
   // 绘制前侧车位后面灰色墙体
-  ctx.beginPath()
-  ctx.rect(start.x + this.car_w * 2 + 3, this.padding + 2, 6, this.long_office.h + this.car_w * 2)
+  ctx.beginPath();
+  ctx.rect(
+    start.x + this.car_w * 2 + 3,
+    this.padding + 2,
+    6,
+    this.long_office.h + this.car_w * 2
+  );
   ctx.fillStyle = this.bgColor;
-  ctx.fill()
+  ctx.fill();
 
   /**
    * 4. 绘制右侧
@@ -247,7 +267,7 @@ DrawCarport.prototype.drawPort = function () {
  * @param {*} h 高度
  * @param {*} hasText 是否绘制文字
  */
-DrawCarport.prototype.drawOffice = function ({x, y, w, h, hasText}) {
+DrawCarport.prototype.drawOffice = function ({ x, y, w, h, hasText }) {
   ctx.beginPath();
   // 办公楼主体
   ctx.lineWidth = 1;
@@ -290,7 +310,7 @@ DrawCarport.prototype.rotateContext = function (ctx, x, y, degree) {
  * @param {*} h 高度
  * @param {*} hasText 是否绘制文字
  */
-DrawCarport.prototype.drawGreenbelts = function ({x, y, w, h}) {
+DrawCarport.prototype.drawGreenbelts = function ({ x, y, w, h }) {
   ctx.beginPath();
   // 办公楼主体
   ctx.rect(x, y, w, h);
