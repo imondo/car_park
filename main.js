@@ -19,22 +19,20 @@ canvas.width = WIDTH;
 
 /**
  * 绘制类
- * @param {*} x
- * @param {*} y
  */
 function DrawCarport() {
   this.bgColor = '#969593'; // 车位颜色
   this.borderColor = '#ffffff'; // 车位border颜色
-  this.lineWidth = 1.0; // 车位线宽度
+  this.lineWidth = 1; // 车位线宽度
 
   this.padding = 5; // 停车场边缘宽度
 
-  this.portLine = 3; // 停车场外围边线宽度
+  this.portLine = 0; // 停车场外围边线宽度
 
-  // 车位宽度 至少需要25等分
-  this.car_w = WIDTH / 29
+  // 车位宽度 至少需要29等分
+  this.car_w = WIDTH / 29;
 
-  HEIGHT = this.car_w * 45
+  HEIGHT = this.car_w * 42; // 重新计算高度，保证停车场能完全展示
 
   canvas.height = HEIGHT;
 
@@ -43,13 +41,174 @@ function DrawCarport() {
   this.halveW = this.portW / 5;
   this.halveH = this.portH / 4;
 
+  // 停车场入口宽度
+  this.car_entry_w = this.car_w * 2 + 6;
 
+  // 办公楼墙体宽度
+  this.office_w = 5 * this.car_w - this.lineWidth * 5; // 6 个车位宽
 
-  this.car_entry_w = this.car_w * 2 + 6; // 入口宽度
-  
-  // 办公楼墙体宽度 
-  this.office_w = 5 * this.car_w - this.lineWidth * 5 // 6 个车位宽
+  // 右侧绿地宽高
+  this.green_w = this.portW - this.office_w - 4;
+
+  // 后侧绿地宽高
+  this.green_office_w = this.car_w * 2;
+
+  /**
+   * 主体信息
+   */
+  // 长办公室
+  this.long_office = {
+    x: this.padding,
+    y: this.padding,
+    w: this.office_w,
+    h: this.portH - this.halveH - this.car_entry_w
+  }
+  // 短办公楼
+  this.short_office = {
+    x: this.padding,
+    y: this.portH - this.halveH,
+    w: this.office_w,
+    h: this.halveH + this.padding
+  }
+
+  // 长绿化
+  this.long_office_green = {
+    x: this.car_w * 6 - this.lineWidth * 13,
+    y: this.padding + 2,
+    w: 2 * this.car_w,
+    h: this.portH - this.halveH - this.car_entry_w
+  }
+  // 短绿化
+  this.short_office_green = {
+    x: this.padding + this.office_w + 1.5,
+    y: this.portH - this.halveH,
+    w: this.portW - this.office_w - 4,
+    h: this.halveH + this.padding
+  }
 }
+
+
+DrawCarport.prototype.init = function () {
+  this.drawPort();
+  // 长办公室
+  this.drawOffice(this.long_office);
+  // 短办公室
+  this.drawOffice(this.short_office);
+
+  // 办公楼绿化
+  this.drawGreenbelts(this.long_office_green);
+
+  // 右测短绿化
+  this.drawGreenbelts(this.short_office_green);
+
+  // 绿化带线条
+  this.drawGreenLine();
+  // 停车场空地
+  this.drawCarSpace();
+
+  /**
+   * 1. 绘制办公楼停车场 后侧
+   */
+  // 车位横向起点
+  var car_x =
+    this.padding + 5 * this.car_w - this.lineWidth * 5 + this.car_w * 2;
+
+  // 起始点
+  var start = {
+    x: car_x,
+    y: this.padding + 2,
+  };
+  // 绘制 24个
+  for (let i = 0; i < 24; i++) {
+    this.drawCar(start.x, start.y + this.car_w * i, 2 * this.car_w, this.car_w);
+  }
+
+  /**
+   * 2. 绘制左侧
+   */
+  // 停车位宽度
+  // 起始点
+  var start = {
+    x: car_x + this.car_w * 4,
+    y: this.padding + 2,
+  };
+  // 绘制 12个
+  for (let i = 0; i < 12; i++) {
+    this.drawCar(
+      start.x + (this.car_w + 5) * i,
+      start.y,
+      this.car_w + 5,
+      this.car_w * 2
+    );
+  }
+
+  /**
+   * 3. 绘制前侧
+   */
+  // 停车位宽度
+  // 起始点
+  var start = {
+    x: this.portW - this.car_w * 2 - 5,
+    y: this.padding + 2 + this.car_w * 3,
+  };
+  // 绘制 21个
+  for (let i = 0; i < 21; i++) {
+    this.drawCar(start.x + 3, start.y + this.car_w * i, this.car_w * 2, this.car_w);
+  }
+
+  // 绘制前侧车位后面灰色墙体
+  ctx.beginPath()
+  ctx.rect(start.x + this.car_w * 2 + 3, this.padding + 2, 6, this.long_office.h + this.car_w * 2)
+  ctx.fillStyle = this.bgColor;
+  ctx.fill()
+
+  /**
+   * 4. 绘制右侧
+   */
+  // 停车位宽度
+  // 起始点
+  var start = {
+    x: car_x + this.car_w * 4,
+    y: this.portH - this.halveH - this.car_w * 2,
+  };
+  // 绘制 12 个
+  for (let i = 0; i < 12; i++) {
+    this.drawCar(
+      start.x + (this.car_w + 5) * i,
+      start.y,
+      this.car_w + 5,
+      this.car_w * 2
+    );
+  }
+
+  /**
+   * 中间4排
+   */
+  var drawCar = this.drawCar;
+  // 起始点
+  function draw_Car(num, padding, car_w) {
+    var start = {
+      x: car_x + car_w * 4,
+      y: padding + 2 + car_w * 2 + car_w * 2 * num,
+    };
+    // 绘制 12个
+    for (let i = 0; i < 9; i++) {
+      drawCar(start.x + (car_w + 5) * i, start.y, car_w + 5, car_w * 2);
+    }
+  }
+
+  draw_Car(1, this.padding, this.car_w);
+  draw_Car(2, this.padding, this.car_w);
+
+  draw_Car(4, this.padding, this.car_w);
+  draw_Car(5, this.padding, this.car_w);
+
+  draw_Car(7, this.padding, this.car_w);
+  draw_Car(8, this.padding, this.car_w);
+
+  draw_Car(10, this.padding, this.car_w);
+  draw_Car(11, this.padding, this.car_w);
+};
 
 /**
  * 绘制停车场外围
@@ -77,7 +236,6 @@ DrawCarport.prototype.drawPort = function () {
   ctx.lineTo(this.padding, this.padding); // 入口拐点
 
   ctx.strokeStyle = '#fffba0';
-  ctx.stroke();
   ctx.closePath();
 };
 
@@ -89,7 +247,7 @@ DrawCarport.prototype.drawPort = function () {
  * @param {*} h 高度
  * @param {*} hasText 是否绘制文字
  */
-DrawCarport.prototype.drawOffice = function (x, y, w, h, hasText) {
+DrawCarport.prototype.drawOffice = function ({x, y, w, h, hasText}) {
   ctx.beginPath();
   // 办公楼主体
   ctx.lineWidth = 1;
@@ -132,7 +290,7 @@ DrawCarport.prototype.rotateContext = function (ctx, x, y, degree) {
  * @param {*} h 高度
  * @param {*} hasText 是否绘制文字
  */
-DrawCarport.prototype.drawGreenbelts = function (x, y, w, h) {
+DrawCarport.prototype.drawGreenbelts = function ({x, y, w, h}) {
   ctx.beginPath();
   // 办公楼主体
   ctx.rect(x, y, w, h);
@@ -150,11 +308,10 @@ DrawCarport.prototype.drawGreenLine = function () {
   var green_w = this.halveW * 4;
   var len = green_w / 6;
   for (let i = 0; i < 10; i++) {
-    var _base_w = this.padding + this.halveW - 4;
+    var _base_w = this.padding + this.short_office.w + 1;
     ctx.beginPath();
     var _w = _base_w + len * i;
     var _h = this.portH - this.halveH + len * i;
-    console.log(_h);
     ctx.moveTo(_w, this.portH - this.halveH);
     ctx.lineTo(_base_w, _h);
     ctx.strokeStyle = '#fff';
@@ -172,7 +329,7 @@ DrawCarport.prototype.drawGreenLine = function () {
   var green_w_q = this.portH - this.halveH - this.car_entry_w;
   var len_q = green_w_q / 8;
   for (let i = 0; i < 12; i++) {
-    var _base_w = this.halveW - this.padding + 6.5;
+    var _base_w = this.padding + this.short_office.w + 1;
     ctx.beginPath();
     var _w = _base_w + len_q * i;
     var _h = this.padding + 2 + len_q * i;
@@ -222,7 +379,7 @@ DrawCarport.prototype.drawCarSpace = function () {
   ctx.beginPath();
   // 起始点
   var start = {
-    x: this.office_w + 2*this.car_w + 4,
+    x: this.office_w + 2 * this.car_w + 4,
     y: this.padding + 2,
   };
   ctx.moveTo(start.x, start.y); // 从上开始
@@ -230,145 +387,8 @@ DrawCarport.prototype.drawCarSpace = function () {
   ctx.lineTo(this.portW + 4, this.halveH * 3);
   ctx.lineTo(this.office_w + 4, this.halveH * 3);
   ctx.lineTo(this.office_w + 4, this.halveH * 3 - this.car_entry_w + 6);
-  ctx.lineTo(
-    start.x,
-    this.halveH * 3 - this.car_entry_w + 6
-  );
+  ctx.lineTo(start.x, this.halveH * 3 - this.car_entry_w + 6);
   // 填充颜色
   ctx.fillStyle = '#eee';
   ctx.fill();
 };
-
-DrawCarport.prototype.init = function () {
-
-  this.drawPort();
-
-  // 右办公楼主体
-  this.drawOffice(
-    this.padding,
-    this.portH - this.halveH,
-    this.office_w,
-    this.halveH + this.padding
-  );
-  // 前办公楼主体
-  this.drawOffice(
-    this.padding,
-    this.padding,
-    this.office_w, // 6 个车位宽
-    this.portH - this.halveH - this.car_entry_w
-  );
-
-  // 右绿化带
-  this.drawGreenbelts(
-    this.padding + this.office_w + 1.5,
-    this.portH - this.halveH,
-    this.portW - this.office_w - 4,
-    this.halveH + this.padding
-  );
-
-  // 前绿化带
-  this.drawGreenbelts(
-    this.car_w * 6 - this.lineWidth * 13,
-    this.padding + 2,
-    2 * this.car_w, // 两个车位宽
-    this.portH - this.halveH - this.car_entry_w
-  );
-
-  // 绿化带线条
-  this.drawGreenLine(this.car_entry_w);
-  // 停车场空地
-  this.drawCarSpace();
-
-  /**
-   * 1. 绘制办公楼停车场 后侧
-   */
-  // 车位横向起点
-  var car_x = this.padding + 5 * this.car_w - this.lineWidth * 5 + this.car_w * 2
-
-  // 起始点
-  var start = {
-    x: car_x,
-    y: this.padding + 2,
-  };
-  // 绘制 23个
-  for (let i = 0; i < 23; i++) {
-    this.drawCar(start.x, start.y + this.car_w * i, 2 * this.car_w, this.car_w);
-  }
-
-  /**
-   * 2. 绘制左侧
-   */
-  // 停车位宽度
-  // 起始点
-  var start = {
-    x: car_x + this.car_w * 4,
-    y: this.padding + 2,
-  };
-  // 绘制 12个
-  for (let i = 0; i < 12; i++) {
-    this.drawCar(start.x + (this.car_w+5) * i, start.y, this.car_w+5, this.car_w * 2);
-  }
-
-  /**
-   * 3. 绘制前侧
-   */
-  // 停车位宽度
-  // 起始点
-  var start = {
-    x: this.portW - this.car_w * 2 - 5,
-    y: this.padding + 2 + this.car_w * 3,
-  };
-  // 绘制 21个
-  for (let i = 0; i < 21; i++) {
-    this.drawCar(start.x, start.y + this.car_w * i, this.car_w * 2, this.car_w);
-  }
-
-  /**
-   * 4. 绘制右侧
-   */
-  // 停车位宽度
-  // 起始点
-  var start = {
-    x: car_x + this.car_w * 4,
-    y: this.portH - this.halveH - this.car_w * 2,
-  };
-  // 绘制 12 个
-  for (let i = 0; i < 12; i++) {
-    this.drawCar(start.x + (this.car_w + 5) * i, start.y, this.car_w + 5, this.car_w * 2);
-  }
-
-  /**
-   * 中间4排
-   */
-  var drawCar = this.drawCar
-  // 起始点
-  function draw_Car(num, halveW, padding, car_w) {
-    var start = {
-      x: car_x + car_w * 4,
-      y: padding + 2 + car_w * 2 + car_w * 2 * num,
-    };
-    // 绘制 12个
-    for (let i = 0; i < 9; i++) {
-      drawCar(start.x + (car_w+5) * i, start.y, car_w+5, car_w * 2);
-    }
-  }
-
-  draw_Car(1, this.halveW, this.padding, this.car_w)
-  draw_Car(2, this.halveW, this.padding, this.car_w)
-
-  draw_Car(4, this.halveW, this.padding, this.car_w)
-  draw_Car(5, this.halveW, this.padding, this.car_w)
-
-  draw_Car(7, this.halveW, this.padding, this.car_w)
-  draw_Car(8, this.halveW, this.padding, this.car_w)
-
-  draw_Car(10, this.halveW, this.padding, this.car_w)
-  draw_Car(11, this.halveW, this.padding, this.car_w)
-
-  
-};
-
-var drawCarport = new DrawCarport();
-
-drawCarport.init();
-
