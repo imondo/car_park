@@ -18,9 +18,7 @@ function createHDCanvas(w = 300, h = 150) {
   return canvas;
 }
 
-var canvas,
-  WIDTH,
-  HEIGHT,ctx;
+var canvas, WIDTH, HEIGHT, ctx;
 
 WIDTH = document.documentElement.clientWidth;
 HEIGHT = document.documentElement.clientHeight;
@@ -96,6 +94,25 @@ function DrawCarport() {
     w: this.portW - this.office_w - 4,
     h: this.halveH + this.padding,
   };
+
+  /**
+   * 记录车位数，为车位标记做准备
+   * {x, y, w, h} 车位标记点
+   */
+  this.car_list = [];
+}
+
+/**
+ * 车位排序
+ */
+function carportBySort(data) {
+  if (!data || !data.length) {
+    return;
+  }
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    item.carport_num = i + 1;
+  }
 }
 
 DrawCarport.prototype.init = function () {
@@ -128,9 +145,18 @@ DrawCarport.prototype.init = function () {
     x: car_x,
     y: this.padding + 2,
   };
+  var car_dot_1 = {
+    direction: '后侧',
+    x: start.x,
+    w: this.car_w * 2,
+    h: this.car_w,
+  };
   // 绘制 24个
   for (let i = 0; i < 24; i++) {
-    this.drawCar(start.x, start.y + this.car_w * i, 2 * this.car_w, this.car_w);
+    var _dot = Object.assign({}, car_dot_1, { id: i, y: start.y + this.car_w * i })
+    this.drawCar(_dot);
+    // 记录车位
+    this.car_list.unshift(_dot);
   }
 
   /**
@@ -142,14 +168,18 @@ DrawCarport.prototype.init = function () {
     x: car_x + this.car_w * 4,
     y: this.padding + 2,
   };
+  var car_dot_2 = {
+    direction: '左侧',
+    y: start.y,
+    w: this.car_w + 5,
+    h: this.car_w * 2,
+  };
   // 绘制 12个
   for (let i = 0; i < 12; i++) {
-    this.drawCar(
-      start.x + (this.car_w + 5) * i,
-      start.y,
-      this.car_w + 5,
-      this.car_w * 2
-    );
+    var _dot = Object.assign({}, car_dot_2, { id: i, x: start.x + (this.car_w + 5) * i, })
+    this.drawCar(_dot);
+    // 记录车位
+    this.car_list.push(_dot);
   }
 
   /**
@@ -161,14 +191,18 @@ DrawCarport.prototype.init = function () {
     x: this.portW - this.car_w * 2 - 5,
     y: this.padding + 2 + this.car_w * 3,
   };
+  var car_dot_3 = {
+    direction: '前侧',
+    x: start.x + 3,
+    w: this.car_w * 2,
+    h: this.car_w,
+  };
   // 绘制 21个
   for (let i = 0; i < 21; i++) {
-    this.drawCar(
-      start.x + 3,
-      start.y + this.car_w * i,
-      this.car_w * 2,
-      this.car_w
-    );
+    var _dot = Object.assign({}, car_dot_3, { id: i, y: start.y + this.car_w * i })
+    this.drawCar(_dot);
+    // 记录车位
+    this.car_list.push(_dot);
   }
 
   // 绘制前侧车位后面灰色墙体
@@ -191,44 +225,74 @@ DrawCarport.prototype.init = function () {
     x: car_x + this.car_w * 4,
     y: this.portH - this.halveH - this.car_w * 2,
   };
+  var car_dot_4 = {
+    direction: '右侧',
+    y: start.y,
+    w: this.car_w + 5,
+    h: this.car_w * 2,
+  };
   // 绘制 12 个
+  var you_car_list = [];
   for (let i = 0; i < 12; i++) {
-    this.drawCar(
-      start.x + (this.car_w + 5) * i,
-      start.y,
-      this.car_w + 5,
-      this.car_w * 2
-    );
+    var _dot = Object.assign({}, car_dot_4, { id: i, x: start.x + (this.car_w + 5) * i })
+    this.drawCar(_dot);
+    // 记录车位
+    you_car_list.unshift(_dot);
   }
+  this.car_list.concat(you_car_list);
 
   /**
    * 中间4排
    */
   var drawCar = this.drawCar;
   // 起始点
-  function draw_Car(num, padding, car_w) {
+  function draw_Car(num, padding, car_w, car_list) {
     var start = {
       x: car_x + car_w * 4,
       y: padding + 2 + car_w * 2 + car_w * 2 * num,
     };
+    var car_dot_5 = {
+      direction: '中间',
+      y: start.y,
+      w: car_w + 5,
+      h: car_w * 2,
+    };
     // 绘制 12个
     for (let i = 0; i < 9; i++) {
-      drawCar(start.x + (car_w + 5) * i, start.y, car_w + 5, car_w * 2);
+      var _id = num + '-' + i
+      var _dot = Object.assign({}, car_dot_5, { id: _id, x: start.x + (car_w + 5) * i })
+      drawCar(_dot);
+      // 记录车位
+      car_list.push(_dot);
     }
   }
 
-  draw_Car(1, this.padding, this.car_w);
-  draw_Car(2, this.padding, this.car_w);
+  draw_Car(1, this.padding, this.car_w, this.car_list);
+  draw_Car(2, this.padding, this.car_w, this.car_list);
 
-  draw_Car(4, this.padding, this.car_w);
-  draw_Car(5, this.padding, this.car_w);
+  draw_Car(4, this.padding, this.car_w, this.car_list);
+  draw_Car(5, this.padding, this.car_w, this.car_list);
 
-  draw_Car(7, this.padding, this.car_w);
-  draw_Car(8, this.padding, this.car_w);
+  draw_Car(7, this.padding, this.car_w, this.car_list);
+  draw_Car(8, this.padding, this.car_w, this.car_list);
 
-  draw_Car(10, this.padding, this.car_w);
-  draw_Car(11, this.padding, this.car_w);
+  draw_Car(10, this.padding, this.car_w, this.car_list);
+  draw_Car(11, this.padding, this.car_w, this.car_list);
+
+  carportBySort(this.car_list);
 };
+
+/**
+ * 车位标记
+ * @param {number} carport_num 车位 
+ */
+DrawCarport.prototype.mark = function(carport_num) {
+  ctx.beginPath();
+  var _carport = this.car_list.find(v => v.carport_num == carport_num);
+  ctx.rect(_carport.x , _carport.y, _carport.w, _carport.h);
+  ctx.fillStyle = 'red';
+  ctx.fill()
+}
 
 /**
  * 绘制停车场外围
@@ -378,7 +442,7 @@ DrawCarport.prototype.drawGreenLine = function () {
 /**
  * 绘制车位
  */
-DrawCarport.prototype.drawCar = function (x, y, w, h) {
+DrawCarport.prototype.drawCar = function ({x, y, w, h}) {
   ctx.beginPath();
   ctx.lineWidth = this.lineWidth;
   ctx.rect(x, y, w, h);
