@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "github": "git push github master"
+  }
+}
