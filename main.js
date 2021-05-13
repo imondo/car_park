@@ -316,7 +316,7 @@ DrawCarport.prototype.mark = function (carport_num) {
   ctx.beginPath();
   var _carport = this.car_list.find((v) => v.carport_num == carport_num);
   ctx.rect(_carport.x, _carport.y, _carport.w, _carport.h);
-  ctx.fillStyle = 'red';
+  ctx.fillStyle = '#FF4B2B';
   ctx.fill();
 };
 
