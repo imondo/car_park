@@ -17,7 +17,7 @@
     var car_port = drawCarport.car_list.find(function (v) {
       return checkPointInPolyline(point, v);
     });
-    toastCarMsg(car_port);
+    toastCarMsg(car_port, point);
   });
 
   function getSpaceList() {
@@ -61,7 +61,7 @@
   }
 
   // 弹出车位状态
-  function toastCarMsg(point) {
+  function toastCarMsg(point, tap_point) {
     var $toast = document.querySelector('#toast');
     var $toastCar = document.querySelector('#toastCar');
     var $toastState = document.querySelector('#toastState');
@@ -72,10 +72,31 @@
     }
 
     var _isUse = point.space.useStatus === 1;
-    $toast.style.top = point.y + (point.w > point.h ? point.h + point.h / 2 : point.h) + 'px';
+    // $toast.style.top =
+    //   point.y +
+    //   (point.w > point.h ? point.h + point.h / 2 : point.h) -
+    //   (isMobile() ? factor_height : 0) +
+    //   'px';
+    $toast.style.top = tap_point.y - factor_height + 'px'
     $toast.style.left = point.x + 'px';
     $toastCar.innerText = point.space.name;
     $toastState.innerText = _isUse ? '已占用' : '空闲';
     $toastState.className = _isUse ? 'occupy' : 'free';
+  }
+
+  // 判断手机端
+  function isMobile() {
+    var sUserAgent = navigator.userAgent;
+    if (
+      sUserAgent.indexOf('Android') > -1 ||
+      sUserAgent.indexOf('iPhone') > -1 ||
+      sUserAgent.indexOf('iPad') > -1 ||
+      sUserAgent.indexOf('iPod') > -1 ||
+      sUserAgent.indexOf('Symbian') > -1
+    ) {
+      return true;
+    } else {
+      return true;
+    }
   }
 })(window, document, axios);
