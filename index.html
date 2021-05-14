@@ -3,17 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1; minimum-scale=1; user-scalable=no;">
+    <meta
+      name="viewport"
+      content="width=device-width; initial-scale=1; maximum-scale=1; minimum-scale=1; user-scalable=no;"
+    />
     <title>停车场示意图</title>
     <style>
       * {
         padding: 0;
         margin: 0;
       }
-      html,body{
+      html,
+      body {
         background-color: #fff;
       }
       html {
+        position: relative;
         height: 100%;
         display: flex;
         justify-content: center;
@@ -23,10 +28,62 @@
         overflow: hidden;
         background-color: #fff;
       }
+      .toast {
+        position: absolute;
+        z-index: 1000;
+        padding: 2px 9px;
+        border-radius: 3px;
+        box-shadow: 0 0 3px #eee;
+        background-color: #fff;
+        font-size: 14px;
+        color: #333;
+        text-align: center;
+        transition: all 0.3s;
+      }
+      .toast::after,
+      .toast::before {
+        position: absolute;
+        top: 100%;
+        left: 10px;
+        border: solid transparent;
+        content: '';
+        height: 0;
+        width: 0;
+        pointer-events: none;
+      }
+
+      .toast::after {
+        border-color: transparent;
+        border-top-color: #fff;
+        border-width: 6px;
+        margin-left: -7px;
+      }
+      .toast::before {
+        border-color: transparent;
+        border-top-color: #fff;
+        border-width: 8px;
+        margin-left: -8px;
+      }
+      .toast #toastCar {
+        font-weight: bold;
+      }
+      .toast #toastState {
+        font-size: 12px;
+      }
+      .occupy {
+        color: #f12711;
+      }
+      .free {
+        color: #2ebf91;
+      }
     </style>
   </head>
   <body>
     <canvas id="canvas"></canvas>
+    <div class="toast" id="toast">
+      <p id="toastCar"></p>
+      <p id="toastState"></p>
+    </div>
     <script src="//cdn.bootcdn.net/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script src="./js/draw.js"></script>
     <script src="./main.js?v=88"></script>
