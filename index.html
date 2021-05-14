@@ -28,23 +28,7 @@
   <body>
     <canvas id="canvas"></canvas>
     <script src="//cdn.bootcdn.net/ajax/libs/axios/0.21.1/axios.min.js"></script>
-    <script src="./main.js?v=5688"></script>
-    <script>
-      var drawCarport = new DrawCarport();
-      drawCarport.init();
-      axios.get('/suer').then(function(res){
-
-      }, function(err) {
-        console.log('err')
-      })
-      var i = 0;
-      do {
-        i++;
-        var car_num = Math.round(Math.random()*100);
-        console.log(car_num);
-        drawCarport.mark(car_num);
-      } while (i <20);
-
-    </script>
+    <script src="./js/draw.js"></script>
+    <script src="./main.js?v=88"></script>
   </body>
 </html>
