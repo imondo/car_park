@@ -17,7 +17,7 @@
     var car_port = drawCarport.car_list.find(function (v) {
       return checkPointInPolyline(point, v);
     });
-    toastCarMsg(car_port, point);
+    toastCarMsg(car_port);
   });
 
   function getSpaceList() {
@@ -61,24 +61,19 @@
   }
 
   // 弹出车位状态
-  function toastCarMsg(point, tap_point) {
+  function toastCarMsg(point) {
     var $toast = document.querySelector('#toast');
     var $toastCar = document.querySelector('#toastCar');
     var $toastState = document.querySelector('#toastState');
 
     $toast.style.display = !point ? 'none' : 'block';
-    if (!point) {
+    if (!point || !point.space) {
       return;
     }
 
     var _isUse = point.space.useStatus === 1;
-    // $toast.style.top =
-    //   point.y +
-    //   (point.w > point.h ? point.h + point.h / 2 : point.h) -
-    //   (isMobile() ? factor_height : 0) +
-    //   'px';
-    $toast.style.top = tap_point.y - factor_height + 'px'
-    $toast.style.left = point.x + 'px';
+
+    drawCarport.drawMarkPoint(point);
     $toastCar.innerText = point.space.name;
     $toastState.innerText = _isUse ? '已占用' : '空闲';
     $toastState.className = _isUse ? 'occupy' : 'free';

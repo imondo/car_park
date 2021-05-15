@@ -7,7 +7,7 @@
  *
  *     后
  */
- function createHDCanvas(w = 300, h = 150) {
+function createHDCanvas(w = 300, h = 150) {
   var ratio = window.devicePixelRatio || 1;
   var canvas = document.getElementById('canvas');
   canvas.width = w * ratio; // 实际渲染像素
@@ -102,6 +102,12 @@ function DrawCarport() {
    * {x, y, w, h} 车位标记点
    */
   this.car_list = [];
+
+  // 点中的车位点
+  this.markPoint = null;
+
+  // 车位占用颜色
+  this.markColor = '#FF4B2B';
 }
 
 /**
@@ -319,7 +325,7 @@ DrawCarport.prototype.mark = function (carport_num) {
   ctx.beginPath();
   var _carport = this.car_list.find((v) => v.carport_num == carport_num);
   ctx.rect(_carport.x, _carport.y, _carport.w, _carport.h);
-  ctx.fillStyle = '#FF4B2B';
+  ctx.fillStyle = this.markColor;
   ctx.fill();
 };
 
@@ -533,7 +539,7 @@ DrawCarport.prototype.drawEntryText = function () {
     color: '#142f20',
     x: _start.x + 5,
     y: _start.y,
-  })
+  });
 };
 
 /**
@@ -543,7 +549,7 @@ DrawCarport.prototype.drawEntryText = function () {
  * @param {*} y
  * @param {*} degree
  */
- DrawCarport.prototype.rotateContext = function (ctx, x, y, degree) {
+DrawCarport.prototype.rotateContext = function (ctx, x, y, degree) {
   ctx.translate(x, y);
   ctx.rotate((degree * Math.PI) / 180);
   ctx.translate(-x, -y);
@@ -567,4 +573,28 @@ DrawCarport.prototype.drawText = function ({ text, color, fontSize, x, y }) {
       ctx.fillText(text, x, y);
       ctx.restore();
     });
+};
+
+DrawCarport.prototype.drawMarkPoint = function (point) {
+  if (this.markPoint) {
+    ctx.clearRect(this.markPoint.x - 3, this.markPoint.y - 3, 6, 6);
+    ctx.rect(this.markPoint.x - 3, this.markPoint.y - 3, 6, 6)
+    ctx.fillStyle = this.markPoint.state ? this.markColor : this.bgColor;
+    ctx.fill();
+    ctx.strokeStyle = this.markPoint.state ? this.markColor : this.bgColor;
+    ctx.stroke();
+    this.markPoint = null;
+  }
+  if (!point) {
+    return;
+  }
+  ctx.beginPath();
+  var circle = {
+    x: point.x + point.w / 2,
+    y: point.y + point.h / 2,
+  };
+  this.markPoint = Object.assign({}, circle, { state: point.space.useStatus === 1});
+  ctx.arc(circle.x, circle.y, 3, 0, 2 * Math.PI);
+  ctx.fillStyle = '#eaafc8';
+  ctx.fill();
 };
