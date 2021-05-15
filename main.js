@@ -27,22 +27,30 @@
           var list = res.data[0];
           var spaceList = list.spaceList;
           var _len = spaceList.length;
+          var car_num = 0; // 占用车位
           for (var i = 0; i < _len; i++) {
             var carport = spaceList[i];
             var num = carport.name.replace(/[A-Z]/g, '');
             carport.carport_num = +num;
             // 车位占用 1 占用 0 空闲
             if (+carport.useStatus) {
+              car_num++;
               drawCarport.mark(carport.carport_num);
             }
             drawCarport.car_list[i].space = carport;
           }
+          setCarpartInfo(_len, car_num);
         }
       },
       function (err) {
         console.log('err');
       }
     );
+  }
+
+  function setCarpartInfo(len, num) {
+    document.querySelector('#sum').innerText = len;
+    document.querySelector('#remain').innerText = len - num;
   }
 
   // 判断是否点中车位
@@ -67,13 +75,11 @@
     var $toastState = document.querySelector('#toastState');
 
     $toast.style.display = !point ? 'none' : 'block';
+    drawCarport.drawMarkPoint(point);
     if (!point || !point.space) {
       return;
     }
-
     var _isUse = point.space.useStatus === 1;
-
-    drawCarport.drawMarkPoint(point);
     $toastCar.innerText = point.space.name;
     $toastState.innerText = _isUse ? '已占用' : '空闲';
     $toastState.className = _isUse ? 'occupy' : 'free';

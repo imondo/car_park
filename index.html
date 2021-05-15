@@ -59,6 +59,21 @@
       .free {
         color: #2ebf91;
       }
+      .carpart-info {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        padding: 5px 10px;
+        box-sizing: border-box;
+        z-index: 1000;
+        border-radius: 3px;
+        box-shadow: 0 0 3px #eee;
+        background-color: #fff;
+        font-size: 14px;
+        color: #333;
+        text-align: left;
+        transition: all 0.3s;
+      }
     </style>
   </head>
   <body>
@@ -66,6 +81,10 @@
     <div class="toast" id="toast">
       <p id="toastCar"></p>
       <p id="toastState"></p>
+    </div>
+    <div class="carpart-info">
+      <p>剩余车位：<span id="remain"></span></p>
+      <p>总车位：<span id="sum"></span></p>
     </div>
     <script src="//cdn.bootcdn.net/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script src="./js/draw.js"></script>
