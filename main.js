@@ -3,17 +3,8 @@
   drawCarport.init();
   getSpaceList();
 
-  // 由于居中影响元素点位置，(整体高度 - canvas 高度 / 2)
-  var factor_height =
-    (document.documentElement.clientHeight -
-      document.querySelector('#canvas').clientHeight) /
-    2;
-
   document.querySelector('#canvas').addEventListener('click', function (e) {
-    var point = {
-      x: e.x,
-      y: e.y,
-    };
+    var point = coordinateTrans(e.x, e.y);
     var car_port = drawCarport.car_list.find(function (v) {
       return checkPointInPolyline(point, v);
     });
@@ -53,14 +44,20 @@
     document.querySelector('#remain').innerText = len - num;
   }
 
+  // 由于居中影响元素点位置需要获取canvas元素的位置
+  function coordinateTrans(x, y) {
+    var bound = document.querySelector('#canvas').getBoundingClientRect();
+    return { x: x - bound.left, y: y - bound.top };
+  }
+
   // 判断是否点中车位
   function checkPointInPolyline(point, polylinePoints) {
     // 当 x > 车位起始点 && x < 起始点 + 车位宽度 && y > 起始点 && y < 起始点 + 车位高度
     if (
       point.x >= polylinePoints.x &&
       point.x <= polylinePoints.x + polylinePoints.w &&
-      point.y - factor_height >= polylinePoints.y &&
-      point.y - factor_height <= polylinePoints.y + polylinePoints.h
+      point.y >= polylinePoints.y &&
+      point.y <= polylinePoints.y + polylinePoints.h
     ) {
       return true;
     } else {
